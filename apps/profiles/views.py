@@ -41,8 +41,10 @@ class GetProfileAPIView(APIView):
 
     def get(self, request):
         user = request.user
-        user_profile = get_object_or_404(Profile, user=user)  # Profile.objects.get(user=user)
-        serializer = ProfileSerializer(user_profile, context={'request': request})
+        user_profile = get_object_or_404(
+            Profile, user=user
+        )  # Profile.objects.get(user=user)
+        serializer = ProfileSerializer(user_profile, context={"request": request})
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
 
@@ -64,7 +66,9 @@ class UpdateProfileAPIView(APIView):
             raise NotYourProfile
 
         data = request.data
-        serializer = UpdateProfileSerializer(instance=request.user.profile, data=data, partial=True)
+        serializer = UpdateProfileSerializer(
+            instance=request.user.profile, data=data, partial=True
+        )
 
         serializer.is_valid(raise_exception=True)
         serializer.save()

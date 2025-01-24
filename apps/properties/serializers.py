@@ -13,7 +13,6 @@ class PropertySerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "user",
-
             "title",
             "slug",
             "ref_code",
@@ -50,10 +49,10 @@ class PropertyCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Property
-        exclude = ['pkid', 'updated_at']
+        exclude = ["pkid", "updated_at"]
 
 
 class PropertyViewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Property
-        exclude = ['pkid', 'updated_at']
+        exclude = ["pkid", "updated_at"]

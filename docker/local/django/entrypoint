@@ -1,11 +1,11 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
+# Exit immediately if a command exits with a non-zero status
 set -o errexit
-
 set -o pipefail
-
 set -o nounset
 
+# Function to check PostgreSQL readiness
 postgres_ready() {
 python << END
 import sys
@@ -17,7 +17,6 @@ try:
         password="${POSTGRES_PASSWORD}",
         host="${POSTGRES_HOST}",
         port="${POSTGRES_PORT}",
-
     )
 except psycopg2.OperationalError:
     sys.exit(-1)
@@ -25,10 +24,24 @@ sys.exit(0)
 END
 }
 
-until postgres_ready; do
- >&2 echo "Waiting for PostgreSQL to become available...."
- sleep 1
-done
->&2 echo "PostgreSQL is ready!!!!..."
+# Wait for PostgreSQL to be ready
+echo "Checking PostgreSQL readiness..."
+timeout=30
+start_time=$(date +%s)
 
+until postgres_ready; do
+    >&2 echo "Waiting for PostgreSQL to become available..."
+    sleep 1
+
+    # Timeout after 30 seconds
+    current_time=$(date +%s)
+    if [ $((current_time - start_time)) -ge $timeout ]; then
+        >&2 echo "Error: Timeout while waiting for PostgreSQL to become available."
+        exit 1
+    fi
+done
+
+>&2 echo "PostgreSQL is ready!"
+
+# Execute the provided command
 exec "$@"

@@ -11,6 +11,7 @@
 **/.toolstarget
 **/.vs
 **/.vscode
+**/real_estate_env
 **/*.*proj.user
 **/*.dbmdl
 **/*.jfm

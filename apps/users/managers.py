@@ -13,7 +13,7 @@ class CustomUserManager(BaseUserManager):
             raise ValueError(_("You Must Provide a Valid Email Address!!"))
 
     def create_user(
-        self, username, first_name, last_name, email, password, **extra_fields
+            self, username, first_name, last_name, email, password, **extra_fields
     ):
         if not username:
             raise ValueError(_("User Must Submit a username"))
@@ -44,7 +44,7 @@ class CustomUserManager(BaseUserManager):
         return user
 
     def create_superuser(
-        self, username, first_name, last_name, email, password, **extra_fields
+            self, username, first_name, last_name, email, password, **extra_fields
     ):
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)

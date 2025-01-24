@@ -5,6 +5,7 @@ from django.utils.translation import gettext_lazy as _
 from .form import CustomUserChangeForm, CustomUserCreationForm
 from .models import User
 
+
 # Register your models here.
 
 

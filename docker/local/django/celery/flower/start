@@ -1,0 +1,27 @@
+#!/bin/bash
+
+set -o errexit
+set -o nounset
+
+# Function to check if workers are ready
+worker_ready(){
+    celery -A real_estate inspect ping
+}
+
+# Wait for Celery workers to be ready
+until worker_ready; do
+    >&2 echo 'Celery workers not available :-('
+    sleep 1
+done
+>&2 echo 'Celery workers are available and ready!...:-)'
+
+# Check if Flower is installed
+#if ! command -v flower &> /dev/null
+#then
+#    echo "Flower is not installed. Installing it..."
+#    pip install --no-cache-dir flower
+#fi
+
+# Start Flower with explicit path (if required)
+
+celery -A real_estate --broker "${CELERY_BROKER}" flower

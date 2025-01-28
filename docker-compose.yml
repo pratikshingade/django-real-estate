@@ -16,7 +16,7 @@ services:
       - .env
     depends_on:
       - postgres-db
-    #            - redis
+      - redis
     networks:
       - estate-react
 
@@ -32,7 +32,7 @@ services:
   #            - estate-react
 
   postgres-db:
-    image: postgres:12.0-alpine
+    image: postgres:17.2-alpine
     ports:
       - "5432:5432"
     volumes:
@@ -44,43 +44,42 @@ services:
     networks:
       - estate-react
 
-#    redis:
-#        image: redis:5-alpine
-#        networks:
-#            - estate-react
+  redis:
+    image: redis:5-alpine
+    networks:
+      - estate-react
 
-#    celery_worker:
-#        build:
-#            context: .
-#            dockerfile: ./docker/local/django/Dockerfile
-#        command: /start-celeryworker
-#        volumes:
-#            - .:/app
-#        env_file:
-#            - .env
-#        depends_on:
-#            - redis
-#            - postgres-db
-#        networks:
-#            - estate-react
+  celery_worker:
+    build:
+      context: .
+      dockerfile: ./docker/local/django/Dockerfile
+    command: /start-celeryworker
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    depends_on:
+      - redis
+      - postgres-db
+    networks:
+      - estate-react
 
-#    flower:
-#        build:
-#            context: .
-#            dockerfile: ./docker/local/django/Dockerfile
-#        command: /start-flower
-#        volumes:
-#            - .:/app
-#        env_file:
-#            - .env
-#        ports:
-#            - "5557:5555"
-#        depends_on:
-#            - redis
-#            - postgres-db
-#        networks:
-#            - estate-react
-
+  flower:
+    build:
+      context: .
+      dockerfile: ./docker/local/django/Dockerfile
+    command: /start-flower
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    ports:
+      - "5555:5555"
+    depends_on:
+      - redis
+      - postgres-db
+    networks:
+      - estate-react
   nginx:
     restart: always
     depends_on:

@@ -14,10 +14,8 @@ services:
     env_file:
       - .env
     depends_on:
-      postgres-db:
-        condition: service_healthy
-      redis:
-        condition: service_started
+      - postgres-db
+      - redis
     networks:
       - estate-react
 
@@ -33,8 +31,6 @@ services:
       - "5173"
     networks:
       - estate-react
-    depends_on:
-      - api
 
   postgres-db:
     image: postgres:17.2-alpine
@@ -43,26 +39,16 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
     networks:
       - estate-react
-    healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
-      interval: 10s
-      retries: 5
-      timeout: 5s
 
   redis:
     image: redis:7-alpine
     networks:
       - estate-react
-    healthcheck:
-      test: [ "CMD", "redis-cli", "ping" ]
-      interval: 5s
-      retries: 3
-      timeout: 3s
 
   celery_worker:
     build:
@@ -74,10 +60,8 @@ services:
     env_file:
       - .env
     depends_on:
-      redis:
-        condition: service_healthy
-      postgres-db:
-        condition: service_healthy
+      - redis
+      - postgres-db
     networks:
       - estate-react
 
@@ -93,24 +77,21 @@ services:
     ports:
       - "5555:5555"
     depends_on:
-      redis:
-        condition: service_healthy
-      postgres-db:
-        condition: service_healthy
+      - redis
+      - postgres-db
     networks:
       - estate-react
 
   nginx:
-    build:
-      context: ./docker/local/nginx
-      dockerfile: Dockerfile
     restart: always
     depends_on:
       - api
-      - client
     volumes:
       - static_volume:/app/staticfiles
       - media_volume:/app/mediafiles
+    build:
+      context: ./docker/local/nginx
+      dockerfile: Dockerfile
     ports:
       - "8080:80"
     networks:

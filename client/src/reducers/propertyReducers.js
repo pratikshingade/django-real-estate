@@ -1,4 +1,5 @@
-import { createSlice } from "@reduxjs/toolkit";
+import {createSlice} from "@reduxjs/toolkit";
+import {PROPERTY_LIST_FAIL, PROPERTY_LIST_REQUEST, PROPERTY_LIST_SUCCESS} from "../actions/types.js";
 
 const initialState = {
     properties: [],
@@ -9,7 +10,20 @@ const propertiesSlice = createSlice({
     initialState,
     reducers: {
         setProperties: (state, action) => {
-            state.properties = action.payload;
+            switch (action.type) {
+                case PROPERTY_LIST_REQUEST:
+                    return {loading: true, initialState}
+
+                case PROPERTY_LIST_SUCCESS:
+                    return {loading: false, properties: action.payload.results}
+
+                case PROPERTY_LIST_FAIL:
+                    return {loading: false, error: action.payload}
+
+                default:
+                    return state
+            }
+            // state.properties = action.payload;
         },
     },
 });

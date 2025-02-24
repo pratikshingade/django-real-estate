@@ -25,3 +25,25 @@ DATABASES = {
 CELERY_BROKER_URL = env("CELERY_BROKER")
 result_backend = env("CELERY_BACKEND")
 timezone = "Asia/Calcutta"
+
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOWED_ORIGINS = ['http://192.168.1.8:5173', 'http://localhost:8080', 'http://localhost:5173',
+                        'http://localhost:8000']
+
+CORS_ALLOW_METHODS = (
+    "DELETE",
+    "GET",
+    "OPTIONS",
+    "PATCH",
+    "POST",
+    "PUT",
+)
+
+CORS_ALLOW_HEADERS = (
+    "accept",
+    "authorization",
+    "content-type",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",
+)

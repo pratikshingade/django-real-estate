@@ -1,47 +1,49 @@
+# Use official slim Python image for reduced size
 FROM python:3.11.0-slim-buster
 
-ENV APP_HOME=/app
-RUN mkdir $APP_HOME
-RUN mkdir $APP_HOME/staticfiles
+# Set environment variables for stability and efficiency
+ENV APP_HOME=/app \
+  PYTHONDONTWRITEBYTECODE=1 \ 
+  PYTHONUNBUFFERED=1 \
+  PATH="/root/.local/bin:$PATH"
+
+# Create application directory
 WORKDIR $APP_HOME
+RUN mkdir -p $APP_HOME/staticfiles $APP_HOME/mediafiles
 
-LABEL maintainer='pratik.shingade04@gmail.com'
-LABEL decription="Development image for Real Estate Project"
+# Metadata labels
+LABEL maintainer="pratik.shingade04@gmail.com"
+LABEL description="Development image for Real Estate Project"
+LABEL Author="Pratik Shingade"
 
-ENV PYTHONDONTWRITEBYTECODE=1
-
-ENV PYTHONUNBUFFERED=1
-
-RUN apt-get update \
-  && apt-get install -y build-essential \
-  && apt-get install -y libpq-dev \
-  && apt-get install -y gettext \
-  && apt-get -y install netcat gcc postgresql \
-  && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
+# Install essential system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    libpq-dev \
+    gettext \
+    netcat \
+    gcc \
+    postgresql-client \
+  && apt-get clean \
   && rm -rf /var/lib/apt/lists/*
 
-RUN pip3 install --upgrade pip
+# Upgrade pip to latest version
+RUN pip install --upgrade pip
 
-COPY ./requirements.txt /app/requirements.txt
+# Install dependencies from requirements.txt
+COPY ./requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-RUN pip3 install -r requirements.txt
-
+# Copy startup scripts and ensure proper permissions
 COPY ./docker/local/django/entrypoint /entrypoint
-RUN sed -i 's/\r$//g' /entrypoint
-RUN chmod +x /entrypoint
-
 COPY ./docker/local/django/start /start
-RUN sed -i 's/\r$//g' /start
-RUN chmod +x /start
-
-
 COPY ./docker/local/django/celery/worker/start /start-celeryworker
-RUN sed -i 's/\r$//g' /start-celeryworker
-RUN chmod +x /start-celeryworker
-
 COPY ./docker/local/django/celery/flower/start /start-flower
-RUN sed -i 's/\r$//g' /start-flower
-RUN chmod +x /start-flower
 
+RUN chmod +x /entrypoint /start /start-celeryworker /start-flower
 
-ENTRYPOINT [ "/entrypoint"]
+# Copy the application code
+COPY . .
+
+# Define entrypoint script
+ENTRYPOINT ["/entrypoint"]

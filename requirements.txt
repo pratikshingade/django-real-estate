@@ -16,6 +16,7 @@ asgiref==3.8.1
     # via
     #   -r requirements.in
     #   django
+    #   django-cors-headers
     #   django-countries
 beautifulsoup4==4.12.3
     # via
@@ -104,7 +105,9 @@ django==5.1.5
     #   -r requirements.in
     #   django-appconf
     #   django-celery-email
+    #   django-cors-headers
     #   django-filter
+    #   django-jazzmin
     #   django-phonenumber-field
     #   djangorestframework
     #   djangorestframework-simplejwt
@@ -118,13 +121,15 @@ django-autoslug==1.9.9
     # via -r requirements.in
 django-celery-email==3.0.0
     # via -r requirements.in
-django-countries==7.6.1
+django-cors-headers==4.7.0
     # via -r requirements.in
-django-cors-headers==4.6.0
+django-countries==7.6.1
     # via -r requirements.in
 django-environ==0.12.0
     # via -r requirements.in
 django-filter==24.3
+    # via -r requirements.in
+django-jazzmin==3.0.1
     # via -r requirements.in
 django-phonenumber-field==8.0.0
     # via -r requirements.in
@@ -401,3 +406,7 @@ wcwidth==0.2.13
     #   prompt-toolkit
 wheel==0.45.1
     # via pip-tools
+
+# The following packages are considered to be unsafe in a requirements file:
+# pip
+# setuptools

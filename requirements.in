@@ -100,3 +100,5 @@ vine
 virtualenv
 watchdog
 wcwidth
+django-jazzmin
+django-cors-headers
